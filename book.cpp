@@ -63,32 +63,32 @@ void block_list::addnode_0(node &a) {
     if(block_mid.length>300)split(cur);
 }
 void block_list::addnode(node &a){//2.0
-    fstream fin,fout;
-    fin.open(filename,ios::in | ios::binary);
-    fout.open(filename,ios::in | ios::out | ios::binary);
-    if(!fin || !fout)cout<<"Invalid"<<"can open"<<endl;
-    fin.seekg(0,ios::end);
-    int x = fin.tellg();
+    fstream f_in,f_out;
+    f_in.open(filename,ios::in | ios::binary);
+    f_out.open(filename,ios::in | ios::out | ios::binary);
+    if(!f_in || !f_out)cout<<"Invalid"<<"can open"<<endl;
+    f_in.seekg(0,ios::end);
+    int x = f_in.tellg();
     if(x == 0){
-        block tmp;
-        fout.seekp(0);
-        fout.write(reinterpret_cast<char*>(&tmp),sizeof(block));
+        block mid;
+        f_out.seekp(0);
+        f_out.write(reinterpret_cast<char*>(&mid),sizeof(block));
     }
     int cur = 0;
     int next = get_next_block(cur);
     while(next != -1){
         block b;
-        fin.seekg(next);
-        fin.read(reinterpret_cast<char*>(&b),sizeof(block));
+        f_in.seekg(next);
+        f_in.read(reinterpret_cast<char*>(&b),sizeof(block));
         if(strcmp(a.key,b.nodes[0].key) < 0)break;
         cur = next;
         next = get_next_block(cur);
     }
     int p = -1;
     bool flag = false;
-    fin.seekg(cur);
+    f_in.seekg(cur);
     block s;
-    fin.read(reinterpret_cast<char*>(&s),sizeof(block));
+    f_in.read(reinterpret_cast<char*>(&s),sizeof(block));
     for(int i = 0 ; i < s.length ; i++)
     {
         if(strcmp(a.key,s.nodes[i].key) < 0){
@@ -104,10 +104,10 @@ void block_list::addnode(node &a){//2.0
     }
     s.nodes[p] = a;
     s.length++;
-    fout.seekp(cur);
-    fout.write(reinterpret_cast<char*>(&s),sizeof(block));
-    fin.close();
-    fout.close();
+    f_out.seekp(cur);
+    f_out.write(reinterpret_cast<char*>(&s),sizeof(block));
+    f_in.close();
+    f_out.close();
     if(s.length >= 290){
         split(cur);
     }
@@ -163,12 +163,12 @@ void block_list::deletenode_0(node &a) {
 }
 
 void block_list::deletenode(node &a){//2.0
-    fstream fin,fout;
-    fin.open(filename,ios::in | ios::binary);
-    fout.open(filename,ios::in | ios::out | ios::binary);
-    if(!fin || !fout)cout<<"Invalid"<<"can open"<<endl;
-    fin.seekg(0,ios::end);
-    int x = fin.tellg();
+    fstream f_in,f_out;
+    f_in.open(filename,ios::in | ios::binary);
+    f_out.open(filename,ios::in | ios::out | ios::binary);
+    if(!f_in || !f_out)cout<<"Invalid"<<"can open"<<endl;
+    f_in.seekg(0,ios::end);
+    int x = f_in.tellg();
     if(x == 0){
         return;
     }
@@ -176,17 +176,17 @@ void block_list::deletenode(node &a){//2.0
     int next = get_next_block(cur);
     while(next != -1){
         block b;
-        fin.seekg(next);
-        fin.read(reinterpret_cast<char*>(&b),sizeof(block));
+        f_in.seekg(next);
+        f_in.read(reinterpret_cast<char*>(&b),sizeof(block));
         if(strcmp(a.key,b.nodes[0].key) < 0)break;
         cur = next;
         next = get_next_block(cur);
     }
     bool flag = true;
     int p ;
-    fout.seekg(cur);
+    f_out.seekg(cur);
     block s;
-    fout.read(reinterpret_cast<char*>(&s),sizeof(block));
+    f_out.read(reinterpret_cast<char*>(&s),sizeof(block));
     for(int i = 0 ; i < s.length ; i++)
     {
         if(strcmp(a.key,s.nodes[i].key) == 0 && a.offset == s.nodes[i].offset){
@@ -201,21 +201,21 @@ void block_list::deletenode(node &a){//2.0
         s.nodes[i] = s.nodes[i + 1];
     }
     s.length--;
-    fout.seekp(cur);
-    fout.write(reinterpret_cast<char*>(&s),sizeof(block));
-    fin.seekg(cur);
+    f_out.seekp(cur);
+    f_out.write(reinterpret_cast<char*>(&s),sizeof(block));
+    f_in.seekg(cur);
     block c;
-    fin.read(reinterpret_cast<char*>(&c),sizeof(block));
+    f_in.read(reinterpret_cast<char*>(&c),sizeof(block));
     next = c.next_offset;
     int nextlen = 0;
     if(next != -1) {
         block az;
-        fin.seekg(next);
-        fin.read(reinterpret_cast<char *>(&az), sizeof(block));
+        f_in.seekg(next);
+        f_in.read(reinterpret_cast<char *>(&az), sizeof(block));
         nextlen = az.length;
     }
-    fin.close();
-    fout.close();
+    f_in.close();
+    f_out.close();
     if(s.length + nextlen <= -1 && next != -1)merge(cur,next);//不想要merge了
 }
 
@@ -247,40 +247,40 @@ void block_list::split_0(int cur) {
 }
 
 void block_list::split(int cur){
-    fstream fin,fout;
-    fin.open(filename,ios::in | ios::binary);
-    fout.open(filename,ios::out | ios :: in | ios ::binary);
-    if(!fin || !fout){cout<<"Invalid"<<endl;return;}
-    block square1,square2,square_tmp;
-    fout.seekg(cur);
-    fout.read(reinterpret_cast<char *>(&square_tmp),sizeof(block));
-    for(int i = 0 ; i <square_tmp.length ; i++)
+    fstream f_in,f_out;
+    f_in.open(filename,ios::in | ios::binary);
+    f_out.open(filename,ios::out | ios :: in | ios ::binary);
+    if(!f_in || !f_out){cout<<"Invalid"<<endl;return;}
+    block square1,square2,square_mid;
+    f_out.seekg(cur);
+    f_out.read(reinterpret_cast<char *>(&square_mid),sizeof(block));
+    for(int i = 0 ; i <square_mid.length ; i++)
     {
         if(i < 150 ){
-            square1.nodes[i] = square_tmp.nodes[i];
+            square1.nodes[i] = square_mid.nodes[i];
         }
         else{
-            square2.nodes[i - 150] = square_tmp.nodes[i];
+            square2.nodes[i - 150] = square_mid.nodes[i];
         }
     }
     square1.length = 150;
-    square2.length = square_tmp.length - 150;
-    fin.seekg(0,ios::end);
-    int offset2 = fin.tellg();
-    if(square_tmp.next_offset >= 0) {
-        fout.seekp(square_tmp.next_offset + sizeof(int));
-        fout.write(reinterpret_cast<char *>(&offset2), sizeof(int));
+    square2.length = square_mid.length - 150;
+    f_in.seekg(0,ios::end);
+    int offset2 = f_in.tellg();
+    if(square_mid.next_offset >= 0) {
+        f_out.seekp(square_mid.next_offset + sizeof(int));
+        f_out.write(reinterpret_cast<char *>(&offset2), sizeof(int));
     }
-    square2.next_offset = square_tmp.next_offset;
+    square2.next_offset = square_mid.next_offset;
     square2.back_offset = cur;
     square1.next_offset = offset2;
-    square1.back_offset = square_tmp.back_offset;
-    fout.seekp(cur);
-    fout.write(reinterpret_cast<char*>(&square1),sizeof(block));
-    fout.seekp(offset2);
-    fout.write(reinterpret_cast<char *>(&square2),sizeof(block));
-    fin.close();
-    fout.close();
+    square1.back_offset = square_mid.back_offset;
+    f_out.seekp(cur);
+    f_out.write(reinterpret_cast<char*>(&square1),sizeof(block));
+    f_out.seekp(offset2);
+    f_out.write(reinterpret_cast<char *>(&square2),sizeof(block));
+    f_in.close();
+    f_out.close();
 }
 
 void block_list::merge(int cur1, int cur2)  {
@@ -351,43 +351,43 @@ void block_list::findnode_0(const string &key, vector<int> &offsets) {
 
 
 void block_list::findnode(const string &key, vector<int> &offsets){//2.0
-    fstream fin,fout;
-    fin.open(filename,ios::in | ios::out | ios::binary);
-    fout.open(filename,ios::in | ios::out | ios::binary);
-    if(!fin || !fout)throw"e";
-    fin.seekg(0,ios::end);
-    int x = fin.tellg();
+    fstream f_in,f_out;
+    f_in.open(filename,ios::in | ios::out | ios::binary);
+    f_out.open(filename,ios::in | ios::out | ios::binary);
+    if(!f_in || !f_out){cout<<"Invalid"<<endl;return;};
+    f_in.seekg(0,ios::end);
+    int x = f_in.tellg();
     if(x == 0){
-        block tmp;
-        fout.seekp(0);
-        fout.write(reinterpret_cast<const char *>(&tmp), sizeof(block));
-        fout.close();
+        block mid;
+        f_out.seekp(0);
+        f_out.write(reinterpret_cast<const char *>(&mid), sizeof(block));
+        f_out.close();
         return;
     }
-    block tmp;
+    block mid;
     int cur = 0;
-    fin.seekg(cur);
-    fin.read(reinterpret_cast<char*>(&tmp),sizeof(block));
-    int next = tmp.next_offset;
+    f_in.seekg(cur);
+    f_in.read(reinterpret_cast<char*>(&mid),sizeof(block));
+    int next = mid.next_offset;
     int pre = 0;
     while(next != -1){
         block b;
-        fin.seekg(next);
-        fin.read(reinterpret_cast<char*>(&b),sizeof(block));
+        f_in.seekg(next);
+        f_in.read(reinterpret_cast<char*>(&b),sizeof(block));
         if(strcmp(key.c_str(),b.nodes[0].key) < 0)break;
-        fin.seekg(cur);
-        fin.read(reinterpret_cast<char*>(&b),sizeof(block));
+        f_in.seekg(cur);
+        f_in.read(reinterpret_cast<char*>(&b),sizeof(block));
         if(strcmp(key.c_str(),b.nodes[0].key) > 0)pre = cur;
         cur = next;
-        block tmp1;
-        fin.seekg(cur);
-        fin.read(reinterpret_cast<char*>(&tmp1),sizeof(block));
-        next = tmp1.next_offset;
+        block mid1;
+        f_in.seekg(cur);
+        f_in.read(reinterpret_cast<char*>(&mid1),sizeof(block));
+        next = mid1.next_offset;
     }
     while(true){
-        fout.seekg(pre);
+        f_out.seekg(pre);
         block s;
-        fout.read(reinterpret_cast<char*>(&s),sizeof(block));
+        f_out.read(reinterpret_cast<char*>(&s),sizeof(block));
         for(int i = 0 ; i < s.length ; i++)
         {
             if(strcmp(key.c_str(),s.nodes[i].key) == 0){
@@ -397,6 +397,6 @@ void block_list::findnode(const string &key, vector<int> &offsets){//2.0
         if(pre == next)break;
         pre = s.next_offset;
     }
-    fin.close();
-    fout.close();
+    f_in.close();
+    f_out.close();
 }
