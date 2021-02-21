@@ -86,6 +86,8 @@ bool people::set_people(vector<people>&people_system_)//新添加的用这个函
         else itr++;
     }
     if(flag){people_system_.push_back(*this);}
+    else cout<<"Invalid"<<endl;
+
     return flag;
 }
 
@@ -120,7 +122,7 @@ void people::user_register(const string& id_,const string& passwd_,const string&
     people other(id_,name_,passwd_);
      other.set_privilege(1);
      bool flag=other.set_people(people_system_);
-     if(flag==false){cout<<"Invalid"<<endl;/*delete other;*/return;}
+     //if(flag==false){cout<<"Invalid"<<endl;/*delete other;*/return;}//输过了
 }
 
 /*void people::user_delete(const string& id_,vector<people>&people_system_,stack<string>stack_){//这里改动，可能出错。。。。。//Yg出错了
