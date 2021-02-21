@@ -146,6 +146,7 @@ void program::run() {//这个最后改
         }
         if(strcmp(token.c_str(),"exit")==0||strcmp(token.c_str(),"quit")==0||strcmp(token.c_str(),"EOF")==0){quit();}
         //delete token;
+        if(token.length()==0){write_out();continue;}//////////
         write_out();cout<<"Invalid"<<endl;
     }
 }
