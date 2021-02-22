@@ -157,6 +157,7 @@ void people::user_register(const string& id_,const string& passwd_,const string&
 
 void people::user_delete(const string& id_,vector<people>&people_system_,stack<string>stack_){//这里改动，可能出错。。。。。//Yg出错了
     if(privilege!=7){cout<<"Invalid"<<endl;return;}
+    if(people_system_.empty()==true){cout<<"Invalid"<<endl;return;}
         bool flag=false;
         auto itr=people_system_.begin();
         while(itr!=people_system_.end())
@@ -182,7 +183,6 @@ void people::user_delete(const string& id_,vector<people>&people_system_,stack<s
             }
          people_system_.erase(itr);
             //delete itr.operator*();
-
 }
 
 
