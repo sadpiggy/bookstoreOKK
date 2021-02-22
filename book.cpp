@@ -12,7 +12,7 @@ int block_list::get_next_block(int offset_) {
 void block_list::addnode_0(node &a) {
     fstream ff1;
     ff1.open(filename,ios::binary|ios::out|ios::in);
-    if(!ff1){cout<<"little brother your program have some programs"<<endl;return;}
+    if(!ff1){cout<<"little brother your program have some programs"<<endl;ff1.close();return;}
     ff1.seekg(0,ios::end);
     int cur=ff1.tellg();
     if(cur==0)//此文件中没有block//是吧？。。。。。。
@@ -117,6 +117,7 @@ void block_list::deletenode_0(node &a) {
     if(cur==0)//此文件中没有block//是吧？。。。。。。
     {
         //cout<<"you have deleted air"<<endl;
+        ff1.close();
         return;//删空气  要返回错误吗？//......
     }
     //cur!=0
@@ -142,6 +143,7 @@ void block_list::deletenode_0(node &a) {
     }
     if(!flag)
     {
+        ff1.close();
         //删空气
         return;
     }
@@ -170,8 +172,8 @@ void block_list::deletenode(node &a){//2.0
 
         //cout<<"Invalid"<<endl;
 
-
-
+        f_in.close();
+        f_out.close();
         return;
     }
     int cur = 0;
@@ -200,7 +202,8 @@ void block_list::deletenode(node &a){//2.0
 
 
 
-    if(flag)return;
+    if(flag){f_in.close();
+        f_out.close();return;}
 
 
    // if(flag){cout<<"Invalid"<<endl;return;}
@@ -234,7 +237,7 @@ void block_list::split_0(int cur) {
     fstream ff;
     block block_mid,block1,block2;
     ff.open(filename,ios::binary|ios::in|ios::out);
-    if(!ff){cout<<"wenjie da bu kai"<<endl;return;}
+    if(!ff){cout<<"wenjie da bu kai"<<endl;ff.close();return;}
     ff.seekg(cur,ios::beg);
     ff.write(reinterpret_cast<char*>(&block_mid),sizeof(block));
     block1.length=200;block2.length=block_mid.length-200;
@@ -261,7 +264,7 @@ void block_list::split(int cur){
     fstream f_in,f_out;
     f_in.open(filename,ios::in | ios::binary);
     f_out.open(filename,ios::out | ios :: in | ios ::binary);
-    if(!f_in || !f_out){cout<<"Invalid"<<endl;return;}
+    if(!f_in || !f_out){cout<<"Invalid"<<endl;f_out.close();f_in.close();return;}
     block square1,square2,square_mid;
     f_out.seekg(cur);
     f_out.read(reinterpret_cast<char *>(&square_mid),sizeof(block));
@@ -365,7 +368,7 @@ void block_list::findnode(const string &key, vector<int> &offsets){//2.0
     fstream f_in,f_out;
     f_in.open(filename,ios::in | ios::out | ios::binary);
     f_out.open(filename,ios::in | ios::out | ios::binary);
-    if(!f_in || !f_out){cout<<"Invalid"<<endl;return;};
+    if(!f_in || !f_out){cout<<"Invalid"<<endl;f_in.close();f_out;return;};
     f_in.seekg(0,ios::end);
     int x = f_in.tellg();
     if(x == 0){
@@ -373,6 +376,7 @@ void block_list::findnode(const string &key, vector<int> &offsets){//2.0
         f_out.seekp(0,ios::beg);
         f_out.write(reinterpret_cast<const char *>(&mid), sizeof(block));
         f_out.close();
+        f_in.close();
         return;
     }
     block mid;
