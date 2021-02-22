@@ -141,12 +141,26 @@ void program::run() {//这个最后改
             int quantity_;//=int(token_3[0]);
             stringstream f(token_3);
             f>>quantity_;
+
+
+            if(f.fail()==true){cout<<"Invalid"<<endl;return;}
+
+
+
             buy(ISBN_,quantity_,*user);
             write_out();continue;
         }
         if(strcmp(token.c_str(),"exit")==0||strcmp(token.c_str(),"quit")==0||strcmp(token.c_str(),"EOF")==0){quit();}
         //delete token;
+
+
+
         if(token.length()==0){write_out();continue;}//////////
+
+
+
+
+
         write_out();cout<<"Invalid"<<endl;
     }
 }
@@ -255,6 +269,9 @@ void program::modify(const string &aa, people &user)
             stringstream f(token_);
             double d;
             f>>d;
+
+            if(f.fail()==true){cout<<"Invalid"<<endl;return;}
+            
             modify_price(d,user);
             continue;
         }
@@ -439,6 +456,10 @@ void program::import(const string &aa, people &user)
     stringstream f1(quantity_),f2(price_);
     int quantity;double price;
     f1>>quantity;f2>>price;
+
+
+    if(f1.fail()==true){cout<<"Invalid"<<endl;return;}
+    if(f2.fail()==true){cout<<"Invalid"<<endl;return;}
     book book_mid;read_in_book(user.select_offset,book_mid);
     book_mid.quantity+=quantity;
     read_out_book(user.select_offset,book_mid);
@@ -612,6 +633,9 @@ void program::show(const string &aa, people &user) {//我有有个大大的问�
             int n;//=int(token_3[0]);
             stringstream f(token_3);
             f>>n;
+
+            if(f.fail()==true){cout<<"Invalid"<<endl;return;}
+            
             show_finance(user,n);
             //delete token_3;delete token;
             return;
