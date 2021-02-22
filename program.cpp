@@ -21,8 +21,10 @@ extern stack<string>log_system;
 extern stack<double>finance_stack;//存收入、收出//存入文件时不做特殊处理，因为读入的时候还会再颠倒一次
 extern double finance_total_zhen;
 extern double finance_total_fu;//都是正的
+show_do  dododo;
 void program::init() {
     ofstream ff;
+    ff.close();
     ff.open("finance.txt",ios::binary);
     ff.close();
     ff.open("books.txt",ios::binary);
@@ -54,6 +56,7 @@ void program::read_in()
     people_system.clear();
     //cout<<"nima";
     fstream ff;
+    ff.close();
     ff.open("people_system.txt",ios::binary|ios::in|ios::out);
     ff.seekg(0,ios::end);//沃日，（iOS：：end）==2,(0,ios::end)==128,NB
     int offset_=ff.tellg();
@@ -105,20 +108,38 @@ void program::run() {//这个最后改
     ff.open("people_system.txt",ios::binary|ios::in);
     if(!ff){//尚未打开过
         init();
+        ff.close();
         //cout<<"INIT";
     } else   ff.close();
-    fstream fff;
+    ff.close();
+    //fstream fff;
     people* user;
     people user_mid;
     read_in();
     while(getline(cin,a))
     {
+
         //if(log_system.empty()==false){user=&(user->get_people(log_system,people_system));}//已改...
          user=&user_mid;
         if(log_system.empty()==false){
             bool flag=user->get_people_2(log_system,people_system);
             if(flag==true)user=&(user->get_people(log_system,people_system));}
+
+       // fstream dof;
+        //dof.open("do.txt",ios::in|ios::out);
+        //dof<<log_system.top().c_str()<<endl;dof<<a<<endl;
+        //dof.close();
+       //if(log_system.empty()== false)
+        //{
+          //  dododo.length++;
+            //dododo.name[dododo.length - 1] = log_system.top().c_str();
+            //dododo.a[dododo.length - 1] = a.c_str();
+            //cout<<dododo.length;
+        //}
         string token=get_token(a,1);//记得delete
+
+        //if(strcmp(token.c_str(),"show_do")==0){show_do();return;}
+
         if((token[0]=='s'&&token[1]=='u')||token[0]=='l'||token[0]=='u'||token[0]=='r'||token[0]=='d'||token[0]=='p')
         {users(a,*user);
         write_out();
@@ -271,7 +292,7 @@ void program::modify(const string &aa, people &user)
             f>>d;
 
             if(f.fail()==true){cout<<"Invalid"<<endl;return;}
-            
+
             modify_price(d,user);
             continue;
         }
@@ -572,7 +593,7 @@ void program::show_all_books(people &user) {
     ff.seekp(0,ios::end);
     int end_offset=ff.tellp();
     ff.seekg(0,ios::beg);
-    if(ff.tellg()==end_offset){cout<<endl;return;}//无书空
+    if(ff.tellg()==end_offset){cout<<endl;ff.close();return;}//无书空
     while (ff.tellg()!=end_offset)//可以·吗·？//不可以
     {
         block block_mid;
@@ -595,6 +616,7 @@ void program::show_all_books(people &user) {
         cout<<"\t"<<book_mid.quantity<<endl;
         itr++;
     }
+    ff.close();
 }
 
 void program::show_finance(people &user,int n) {
@@ -635,7 +657,7 @@ void program::show(const string &aa, people &user) {//我有有个大大的问�
             f>>n;
 
             if(f.fail()==true){cout<<"Invalid"<<endl;return;}
-            
+
             show_finance(user,n);
             //delete token_3;delete token;
             return;
@@ -897,4 +919,8 @@ int program::char_to_int(const string &aa)
     if(aa[0]=='1')return 1;
     if(aa[0]=='3')return 3;
     if(aa[0]=='7')return 7;
+}
+
+void program::show_do() {
+   for(int i=1;i<=dododo.length;i++){cout<<dododo.a[dododo.length-1]<<endl<<dododo.name[dododo.length-1]<<endl;}
 }
