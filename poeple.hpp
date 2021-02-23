@@ -1,97 +1,87 @@
-#ifndef PROGRAM
-#define PROGRAM
-//文件   books.txt   ISBN.txt  NAME.txt   AUTHOR.txt KEYWORD.txt people_system.txt
-//文件   finance.txt
-//get_token一族用到都要delete
-#include"poeple.hpp"
-#include"book.hpp"
-#include <map>
-#include "string"
-#define ISBNFILE ("ISBN.txt")
-//do.txt
-//block_list book_block("books.txt");//这个应该无用
-
-//block_list people_system_block("people_system.txt");//这个应该也无用
-class program{//记得优先级的判断呀
+#ifndef PEOPLE
+#define PEOPLE
+#include<iostream>
+#include<stack>
+#include<string>
+#include<vector>
+#include "cstring"
+using namespace std;//其实这里不应该搞继承的，直接万物平等更方便
+class people{
+private:
+   char id[40];
+   char name[40];
+   char passwd[40];
 public:
+    int privilege=0;//迫不得已
+    int select_offset=-1;
+    people(const string& id_,const string& name_,const string& passwd_ )//这里可能有bug//为什么不能用char*？
+   {
+        memset(id,'\0',sizeof(id));
+        memset(name,'\0',sizeof(name));
+        memset(passwd,'\0',sizeof(passwd));
+       strcpy(id,id_.c_str());
+       strcpy(name,name_.c_str());
+       strcpy(passwd,passwd_.c_str());
+       privilege=0;
+   }
+   people(){
+       memset(id,'\0',sizeof(id));
+       memset(name,'\0',sizeof(name));
+       memset(passwd,'\0',sizeof(passwd));
+    }
+   ~people(){};//这个要写吗？我忘了，艹
+   void set_privilege(int n);
 
-    void init();
+    people& get_people(stack<string>&stack_,vector<people>&people_system_);
 
-    void run();
+    bool
+    get_people_2(stack<string>&stack_,vector<people>&people_system_);
 
-    void select(const string& ISBN_,people& user);
+   void login(stack<string>&stack_,vector<people>&people_system_,const  string& id_,const string& passwd_);
 
-    void modify_ISBN(const string& ISBN_,people&user);
+    void login(stack<string>&stack_,vector<people>&people_system_,const string& id_);
 
-    void modify_name(const string &NAME_,people&user);
+   void logout(stack<string>&stack_);
 
-    void modify_author(const string &author_,people&user);
+    bool set_people(vector<people>&people_system_);//新添加的用这个函数
 
-    void modify_price(double price_,people&user);
+    //useradd [user-id] [passwd] [7/3/1] [name] #3:增加一个指定权限的用户，只能创建小于自己权限的账户
+    //add 和 register 需要new,因为vector和stack里面存储的是people*指针，不是people
+    void user_add( const string& id_, const string& passwd_,int privilege_, const string& name_,vector<people>&people_system_);
 
-    void modify_keyword(const string &keyword_,people&user);//这里应该与其他的不太一样//大体一样，只是keywords要划分成小块，然后一块一块处理
+   //register [user-id] [passwd] [name] #0:注册一个带有这些信息的权限1用户
+   void user_register(const string& id_,const string& passwd_,const string& name_,vector<people>&people_system_);
+    //stack也要进行相应改变，对吗？
+    //很抱歉，我不会
+    //只能在使用stack的时候再处理了
+   void user_delete( const string& id_,vector<people>&people_system_,stack<string>satck_);
+   //修改密码
+   //passwd [user-id] [old-passwd(if not root)] [new-passwd] #1:root不需要填写旧密码，其余账户需要
+   void user_passwd( const string& id_,const string& old_passwd,const string& new_passwd,vector<people>&people_system_);
+   //root用
+   void user_passwd(const string& id_, const string& new_passwd,vector<people>&people_system_);
 
-    void modify_keywords(const string &keywords_,people&user);//这个是大块
-
-    void users(const string& aa,people& user);
-
-    void modify(const string& aa,people& user);
-
-    void show(const string &aa,people& user);
-
-    void show_all_books(people& user);
-
-    void show_ISBN(const string &ISBN_,people&user);
-
-    void show_name(const string &NAME_,people&user);
-
-    void show_author(const string &author_,people&user);
-
-    void show_keyword(const string &keyword_,people&user);
-
-    void show_finance( people& user,int n=0);
-
-    void import(const string &aa,people& user);
-
-    void buy(const string &ISBN_,int quantity,people& user);
-    //工具
-    void read_in();//people.txt,用之前read_in,之后write_out,加了个新功能，read_in  finance.txt
-
-    void write_out();
-
-    string get_token(const string &aa,int n);//用完之后记得delete
-
-    int get_token_num(const string &aa);
-
-    int get_keyword_num(const string &aa);
-
-    string get_keyword(const string &aa,int n);
-
-    string get_token_2(const string &aa);//把双引号之间的内容取出来
-
-    string get_token_3(const string &aa);//把等号后的内容取出来//注：get_token函数的复用性应该更强的，没写好
-
-    void read_in_book(int offset_,book&book_mid);//把一本书读入程序
-
-    void read_out_book(int offset_,book book_mid);//吧一本书读入文件
-
-    void sum_finance(int n=0);//计算最近n次的finance
-
-    bool sum_time(int n);
-
-    void quit();
-
-    int char_to_int(const string &aa);
-
-    void show_do();
+   void set_select(int select,vector<people>&people_system_);
 };
-
-
-/*class  show_do
+/*
+class root: public people
 {
 public:
-    string name[100];
-    string a[100];
-    int length=0;
-};*/
+    root( char* id_, char* name_, char* passwd_): people(  id_,  name_,  passwd_ ){privilege=7;};
+
+    root(): people( "root","root","sjtu" ){privilege=7;};
+};
+class worker: public  people//为什么不是public基类指针就不能指向它了？
+{
+public:
+    worker( char* id_, char* name_, char* passwd_): people(  id_,  name_,  passwd_ ){privilege=3;};
+
+};
+class customer: public people
+{
+public:
+    customer( char* id_, char* name_, char* passwd_): people(  id_,  name_,  passwd_ ){privilege=1;};
+
+};
+*/
 #endif
