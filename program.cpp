@@ -21,7 +21,7 @@ extern stack<string>log_system;
 extern stack<double>finance_stack;//存收入、收出//存入文件时不做特殊处理，因为读入的时候还会再颠倒一次
 extern double finance_total_zhen;
 extern double finance_total_fu;//都是正的
-show_do  dododo;
+//show_do  dododo;
 void program::init() {
     ofstream ff;
     ff.close();
@@ -921,6 +921,6 @@ int program::char_to_int(const string &aa)
     if(aa[0]=='7')return 7;
 }
 
-void program::show_do() {
+/*void program::show_do() {
    for(int i=1;i<=dododo.length;i++){cout<<dododo.a[dododo.length-1]<<endl<<dododo.name[dododo.length-1]<<endl;}
-}
+}*/
