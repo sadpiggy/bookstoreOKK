@@ -8,6 +8,7 @@
 #include <map>
 #include "string"
 #define ISBNFILE ("ISBN.txt")
+//do.txt
 //block_list book_block("books.txt");//这个应该无用
 
 //block_list people_system_block("people_system.txt");//这个应该也无用
@@ -82,5 +83,15 @@ public:
 
     int char_to_int(const string &aa);
 
+    void show_do();
 };
+
+
+/*class  show_do
+{
+public:
+    string name[100];
+    string a[100];
+    int length=0;
+};*/
 #endif
