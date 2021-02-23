@@ -1,240 +1,97 @@
+#ifndef PROGRAM
+#define PROGRAM
+//文件   books.txt   ISBN.txt  NAME.txt   AUTHOR.txt KEYWORD.txt people_system.txt
+//文件   finance.txt
+//get_token一族用到都要delete
 #include"poeple.hpp"
-people& people:: get_people(stack<string>&stack_,vector<people>&people_system_)
+#include"book.hpp"
+#include <map>
+#include "string"
+#define ISBNFILE ("ISBN.txt")
+//do.txt
+//block_list book_block("books.txt");//这个应该无用
+
+//block_list people_system_block("people_system.txt");//这个应该也无用
+class program{//记得优先级的判断呀
+public:
+
+    void init();
+
+    void run();
+
+    void select(const string& ISBN_,people& user);
+
+    void modify_ISBN(const string& ISBN_,people&user);
+
+    void modify_name(const string &NAME_,people&user);
+
+    void modify_author(const string &author_,people&user);
+
+    void modify_price(double price_,people&user);
+
+    void modify_keyword(const string &keyword_,people&user);//这里应该与其他的不太一样//大体一样，只是keywords要划分成小块，然后一块一块处理
+
+    void modify_keywords(const string &keywords_,people&user);//这个是大块
+
+    void users(const string& aa,people& user);
+
+    void modify(const string& aa,people& user);
+
+    void show(const string &aa,people& user);
+
+    void show_all_books(people& user);
+
+    void show_ISBN(const string &ISBN_,people&user);
+
+    void show_name(const string &NAME_,people&user);
+
+    void show_author(const string &author_,people&user);
+
+    void show_keyword(const string &keyword_,people&user);
+
+    void show_finance( people& user,int n=0);
+
+    void import(const string &aa,people& user);
+
+    void buy(const string &ISBN_,int quantity,people& user);
+    //工具
+    void read_in();//people.txt,用之前read_in,之后write_out,加了个新功能，read_in  finance.txt
+
+    void write_out();
+
+    string get_token(const string &aa,int n);//用完之后记得delete
+
+    int get_token_num(const string &aa);
+
+    int get_keyword_num(const string &aa);
+
+    string get_keyword(const string &aa,int n);
+
+    string get_token_2(const string &aa);//把双引号之间的内容取出来
+
+    string get_token_3(const string &aa);//把等号后的内容取出来//注：get_token函数的复用性应该更强的，没写好
+
+    void read_in_book(int offset_,book&book_mid);//把一本书读入程序
+
+    void read_out_book(int offset_,book book_mid);//吧一本书读入文件
+
+    void sum_finance(int n=0);//计算最近n次的finance
+
+    bool sum_time(int n);
+
+    void quit();
+
+    int char_to_int(const string &aa);
+
+    void show_do();
+};
+
+
+/*class  show_do
 {
-    auto itr=people_system_.begin();
-    char id_[80];
-    strcpy(id_,stack_.top().c_str());
-    while(itr!=people_system_.end())
-    {
-        if(strcmp(id_,itr.operator*().id)==0){return itr.operator*();}//不能拿指针来比较
-        else itr++;
-    }
-
-}
-
-bool people::get_people_2(stack<string> &stack_, vector<people> &people_system_) {
-    auto itr=people_system_.begin();
-    char id_[80];
-    strcpy(id_,stack_.top().c_str());
-    while(itr!=people_system_.end())
-    {
-        if(strcmp(id_,itr.operator*().id)==0){return true;}//不能拿指针来比较
-        else itr++;
-    }
-    return false;//就是没找到，就是已经删了
-}
-
-void people::login(stack<string>&stack_,vector<people>&people_system_,const string& id_,const string& passwd_){
-   // cout<<"log_id  "<<id_<<endl;
-    bool flag=false;
-    auto itr=people_system_.begin();
-    while(itr!=people_system_.end())
-    {
-        if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较//左小于右.返回负
-        else itr++;
-    }
-    if(flag==false){cout<<"Invalid";return ;}
-    else {
-        //cout<<"jjj";
-        if(strcmp(passwd_.c_str(),itr.operator*().passwd)!=0){cout<<"Invalid"<<endl;return;}
-        else {
-            string id_2;
-            id_2=itr.operator*().id;
-            stack_.push(id_2);
-            //cout<<stack_.top()<<"  stacK"<<endl;//
-            //cout<<"id  "<<id_2<<endl;//
-        }
-    }
-    //stack_.push(this);
-}
-
-void people::login(stack<string>&stack_,vector<people>&people_system_,const string& id_)
-{
-    bool flag=false;
-    auto itr=people_system_.begin();
-    while(itr!=people_system_.end())
-    {
-        if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较
-        else itr++;
-    }
-    if(flag==false){cout<<"Invalid"<<endl;return ;}
-    else {
-        if(privilege<=itr.operator*().privilege){cout<<"Invalid"<<endl;return;}
-        else {
-            string id_2;
-            id_2=itr.operator*().id;
-            stack_.push(id_2);
-        }
-    }
-}
-
-void people::logout(stack<string>&stack_){
-    //cout<<id;
-    if(stack_.empty()){cout<<"Invalid"<<endl;return;}
-    else stack_.pop();
-}
-
-bool people::set_people(vector<people>&people_system_)//新添加的用这个函数
-{
-    //cout<<id<<"  id"<<endl;
-    bool flag=true;
-    auto itr=people_system_.begin();
-    while(itr!=people_system_.end())
-    {
-        //  if(id==itr.operator*()->id){flag=false;break;}
-        if(strcmp(id,itr.operator*().id)==0){flag=false;break;}//不能拿指针来比较
-        else itr++;
-    }
-    if(flag){people_system_.push_back(*this);}
-    else cout<<"Invalid"<<endl;
-
-    return flag;
-}
-
-void people::set_privilege(int n)
-{
-    privilege=n;
-}
-
-void people:: user_add( const string& id_, const string& passwd_,int privilege_,const string& name_,vector<people>&people_system_){
-    bool  flag;//cout<<"niam";
-    if(privilege<=privilege_){cout<<"Invalid"<<endl;return;}
-    if(privilege_==3){
-        people other(id_,name_,passwd_);
-        other.set_privilege(3);
-        flag=other.set_people(people_system_);
-    }
-   if(privilege_==1)
-   {
-      // people *other = new people(id_, name_, passwd_);
-       people other(id_,name_,passwd_);
-       other.set_privilege(1);
-       flag = other.set_people(people_system_);
-   }
-   //
-    //people* other(id_,name_,passwd_);
-}
-
-void people::user_register(const string& id_,const string& passwd_,const string& name_,vector<people>&people_system_)
-{
-    //cout<<"register"<<endl;///
-     //people* other=new people(id_,name_,passwd_);
-    people other(id_,name_,passwd_);
-     other.set_privilege(1);
-     bool flag=other.set_people(people_system_);
-     //if(flag==false){cout<<"Invalid"<<endl;/*delete other;*/return;}//输过了
-}
-
-/*void people::user_delete(const string& id_,vector<people>&people_system_,stack<string>stack_){//这里改动，可能出错。。。。。//Yg出错了
-    if(privilege!=7){cout<<"Invalid"<<endl;return;}
-    else {
-        bool flag=false;
-        auto itr=people_system_.begin();
-        while(itr!=people_system_.end())
-        {
-           // if(id_==itr.operator*()->id){flag=true;break;}
-            if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较
-            else itr++;
-        }
-        if(flag==false){cout<<"Invalid"<<endl;return;}
-        if(itr->privilege==7){cout<<"Invalid"<<endl;return;}
-        people_system_.erase(itr);
-        /*else{//听说，delete以及登录的用户，非法
-            //stack<>//
-            while (stack_.empty()==false)
-            {
-                if(strcmp(id_.c_str(),stack_.top().c_str())==0)
-                {
-                   cout<<"Invalid"<<endl;return;
-                }
-                else stack_.pop();
-            }
-         people_system_.erase(itr);
-            //delete itr.operator*();
-        }
-    }
-}*/
-
-void people::user_delete(const string& id_,vector<people>&people_system_,stack<string>stack_){//这里改动，可能出错。。。。。//Yg出错了
-    if(privilege!=7){cout<<"Invalid"<<endl;return;}
-    if(people_system_.empty()==true){cout<<"Invalid"<<endl;return;}
-        bool flag=false;
-        auto itr=people_system_.begin();
-        while(itr!=people_system_.end())
-        {
-            // if(id_==itr.operator*()->id){flag=true;break;}
-            if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较
-            else itr++;
-        }
-        if(flag==false){cout<<"Invalid"<<endl;return;}
-
-        //if(itr->privilege==7){cout<<"Invalid"<<endl;return;}
-
-        //people_system_.erase(itr);
-        //听说，delete以及登录的用户，非法
-            //stack<>//
-            while (stack_.empty()==false)
-            {
-                if(strcmp(id_.c_str(),stack_.top().c_str())==0)
-                {
-                   cout<<"Invalid"<<endl;return;
-                }
-                else stack_.pop();
-            }
-         people_system_.erase(itr);
-            //delete itr.operator*();
-}
-
-
-void people::user_passwd( const string& id_, const string& old_passwd, const string& new_passwd,vector<people>&people_system_) {
-    if(privilege==0){cout<<"Invalid"<<endl;return;}
-    else{
-        bool flag=false;
-        auto itr=people_system_.begin();
-        while(itr!=people_system_.end())
-        {
-            //if(id_==itr.operator*()->id){flag=true;break;}
-            if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较
-            else itr++;
-        }
-        if(flag==false){cout<<"Invalid"<<endl;return;}
-        else{
-            if(strcmp(itr.operator*().passwd,old_passwd.c_str())==0)//相同
-            {
-                strcpy(itr.operator*().passwd,new_passwd.c_str());
-            }else{//不同
-                cout<<"Invalid"<<endl;return;
-            }
-        }
-    }
-}
-
-void people::user_passwd( const string& id_, const string& new_passwd,vector<people>&people_system_){
-    if(privilege!=7){cout<<"Invalid"<<endl;return;}
-    else{
-        bool flag=false;
-        auto itr=people_system_.begin();
-        while(itr!=people_system_.end())
-        {
-           // if(id_==itr.operator*()->id){flag=true;break;}
-            if(strcmp(id_.c_str(),itr.operator*().id)==0){flag=true;break;}//不能拿指针来比较
-            else itr++;
-        }
-        if(flag==false){cout<<"Invalid"<<endl;return;}
-        else{
-            strcpy(itr.operator*().passwd,new_passwd.c_str());
-        }
-    }
-}
-
-void people::set_select(int select,vector<people>&people_system_){/////
-    select_offset=select;
-    auto itr=people_system_.begin();
-    while(itr!=people_system_.end())
-    {
-        //  if(id==itr.operator*()->id){flag=false;break;}
-        if(strcmp(id,itr.operator*().id)==0){break;}//不能拿指针来比较
-        else itr++;
-    }
-    itr.operator*().select_offset=select;
-}
+public:
+    string name[100];
+    string a[100];
+    int length=0;
+};*/
+#endif
