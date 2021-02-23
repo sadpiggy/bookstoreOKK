@@ -82,19 +82,20 @@ public:
 //length为1，char【0】=..
 class block_list{
 public:
-    char filename[70] = "";
+    char filename[70]={'\0'};
     explicit block_list(const string& a){
+        memset(filename,'\0',sizeof(filename));
         strcpy(filename,a.c_str());
     }
     int get_next_block(int offset);
     void addnode(node &a);
-    void addnode_0(node &a);
+    //void addnode_0(node &a);
     void deletenode(node &a);
-    void deletenode_0(node &a);
+    //void deletenode_0(node &a);
     void findnode(const string& key,vector<int>&offsets);
-    void findnode_0(const string& key,vector<int>&offsets);
+    //void findnode_0(const string& key,vector<int>&offsets);
     void merge(int cur1,int cur2);
     void split(int cur);
-    void split_0(int cur);
+    //void split_0(int cur);
 };
 #endif
